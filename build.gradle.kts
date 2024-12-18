@@ -26,6 +26,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     compileOnly(":multiverse-core-4.3.14")
     compileOnly(":multiverse-portals-4.2.3")
+    compileOnly(":multiverse-inventories-4.2.6")
     compileOnly(":worldedit-bukkit-7.3.9")
 }
 

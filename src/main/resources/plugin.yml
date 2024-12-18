@@ -2,4 +2,4 @@ name: serverjesjackplugin
 version: "${version}"
 main: org.jesjack.serverjesjackplugin.MultiWorldParser
 api-version: "1.20"
-depend: [Multiverse-Core, Multiverse-Portals, WorldEdit]
+depend: [Multiverse-Core, Multiverse-Portals, Multiverse-Inventories, WorldEdit]

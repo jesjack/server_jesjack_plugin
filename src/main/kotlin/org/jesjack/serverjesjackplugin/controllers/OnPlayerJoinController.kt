@@ -12,6 +12,7 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.jesjack.serverjesjackplugin.MultiWorldParser
 import org.jesjack.serverjesjackplugin.MultiWorldParser.Companion.logger
 import org.jesjack.serverjesjackplugin.MultiWorldParser.Companion.multiverseCore
+import org.jesjack.serverjesjackplugin.MultiWorldParser.Companion.multiverseInventories
 import org.jesjack.serverjesjackplugin.entities.Chunk.Companion.loadChunkAtCoordinates
 import org.jesjack.serverjesjackplugin.entities.Frame
 import org.jesjack.serverjesjackplugin.entities.Portal
@@ -22,8 +23,18 @@ class OnPlayerJoinController(private val event: PlayerJoinEvent, private val mul
 
     fun handle() {
         val world = createWorldForPlayer(event.player) ?: return
-        createNetherWorldForPlayer(event.player)
-        createEndWorldForPlayer(event.player)
+        val netherWorld = createNetherWorldForPlayer(event.player)
+        val endWorld = createEndWorldForPlayer(event.player)
+
+        val group = multiverseInventories.groupManager.getGroup("player_worlds")
+        group.addWorld(world.name)
+        if (netherWorld != null) {
+            group.addWorld(netherWorld.name)
+        }
+        if (endWorld != null) {
+            group.addWorld(endWorld.name)
+        }
+
         createPortalForWorld(world) {
             it.forEach { p ->
                 Frame(p).apply {
@@ -35,11 +46,11 @@ class OnPlayerJoinController(private val event: PlayerJoinEvent, private val mul
         }
     }
 
-    private fun createEndWorldForPlayer(player: Player) {
+    private fun createEndWorldForPlayer(player: Player): MultiverseWorld? {
         val worldName = "world_${player.name}_end"
         if (worldExists(worldName)) {
             logger.info("End world $worldName already exists")
-            return
+            return multiverseCore.mvWorldManager.getMVWorld(worldName)
         }
         if (!multiverseCore.mvWorldManager.addWorld(
                 worldName,
@@ -51,17 +62,17 @@ class OnPlayerJoinController(private val event: PlayerJoinEvent, private val mul
             )
         ) {
             logger.severe("Failed to create or get End world $worldName")
-            return
+            return null
         }
         logger.info("Created End world $worldName for player ${player.name}")
-        return
+        return multiverseCore.mvWorldManager.getMVWorld(worldName)
     }
 
-    private fun createNetherWorldForPlayer(player: Player) {
+    private fun createNetherWorldForPlayer(player: Player): MultiverseWorld? {
         val worldName = "world_${player.name}_nether"
         if (worldExists(worldName)) {
             logger.info("Nether world $worldName already exists")
-            return
+            return multiverseCore.mvWorldManager.getMVWorld(worldName)
         }
         if (!multiverseCore.mvWorldManager.addWorld(
                 worldName,
@@ -73,10 +84,10 @@ class OnPlayerJoinController(private val event: PlayerJoinEvent, private val mul
             )
         ) {
             logger.severe("Failed to create or get Nether world $worldName")
-            return
+            return null
         }
         logger.info("Created Nether world $worldName for player ${player.name}")
-        return
+        return multiverseCore.mvWorldManager.getMVWorld(worldName)
     }
 
 
