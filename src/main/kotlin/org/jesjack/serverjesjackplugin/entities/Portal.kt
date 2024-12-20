@@ -12,7 +12,7 @@ class Portal(
     private var _destination: Location,
 ) {
     private val portals = multiversePortals.portalManager.getPortals(Bukkit.getConsoleSender())
-    private val portalName = "${location.mvWorld.name}_to_${_destination.world?.name}"
+    private val portalName = "${location.mvWorld.name}_to_${_destination.world?.name}".replace('.', '_')
 
     init {
         if (exists()) {
